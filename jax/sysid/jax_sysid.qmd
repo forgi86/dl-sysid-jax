@@ -247,7 +247,7 @@ We are almost done! Just need to define a loss and optimize w.r.t. `params` and 
 
 Loss function available, together with its derivatives. In a sense, the problem is *solved*.
 ```{python}
-loss_fn(opt_vars, u_tr_sc, y_tr_sc)
+loss_fn(opt_vars, y_tr_sc, u_tr_sc)
 ```
 
 ## Training loss and test performance

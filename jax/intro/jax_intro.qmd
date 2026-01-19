@@ -193,8 +193,8 @@ with $n_p=2$ parameters.
 We exploit that `f` can process a vector input `x`:
 ```{python}
 def loss_fn(p, y, x):
-    ym = f(p, x) # works with vector x
-    loss = jnp.mean((y - ym) ** 2)
+    y_hat = f(p, x) # works with vector x
+    loss = jnp.mean((y - y_hat) ** 2)
     return loss
 ```
 
