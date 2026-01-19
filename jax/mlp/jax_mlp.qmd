@@ -135,6 +135,9 @@ params = {
   "b2": jr.normal(key_b2, shape=(ny,)),
 }
 ```
+\pause
+\vskip -.3em
+Better initializations exist (Kaiming, Glorot,\dots). Key for big nets, omitted for simplicity.
 
 ## Feed-forward neural network implementation
 * Let us apply the neural network to a data point:
@@ -245,3 +248,11 @@ plt.legend();
 * Extension to MIMO is trivial - just change $n_x, n_y$
 \pause 
 * Extension to dynamical systems tomorrow
+
+
+## Exercises
+
+* Try out different hyper-parameters (e.g., hidden layers $n_h$, non-linearity function)
+* Try out different initialization and optimization settings
+* Define and train a neural network with 2 hidden layers
+* Replicate the 2D example in the introductory slides

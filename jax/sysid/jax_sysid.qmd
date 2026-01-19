@@ -19,6 +19,7 @@ include-in-header:
     \newcommand{\NN}{\mathbb{N}}
     \newcommand{\RR}{\mathbb{R}}
     \newcommand{\indep}{\perp \!\!\! \perp}
+    \newcommand{\param}{p}
 format: 
   beamer:
     classoption: presentation
@@ -57,14 +58,14 @@ plt.rcParams.update(custom_params)
 We consider state-space models in the form:
 
 \begin{align*}
-x(k+1) &= f(x(k),  u(k); \theta) \\
-y(k) &= g(x(k); \theta)
+x(k+1) &= f(x(k),  u(k); \param) \\
+y(k) &= g(x(k); \param)
 \end{align*}
 
 * $x(k) \in \mathbb{R}^{n_x}$ is the state vector. Latent, hidden, unobserved variable
-* $u(k) \in \mathbb{R}^{n_u}$ is the input vector. External, exogenous variable.
+* $u(k) \in \mathbb{R}^{n_u}$ is the input vector. External, exogenous variable
 * $y(k) \in \mathbb{R}^{n_y}$ is the output vector
-* $\theta \in \mathbb{R}^{n_\theta}$ is the parameter vector
+* $\param \in \mathbb{R}^{n_\param}$ is the parameter vector
 
 I don't need to convince you that they are general and powerful!
 \pause
@@ -153,11 +154,11 @@ Same procedure applied to the output\dots
 * We will implement simulation error minimization:
 
    \begin{equation*}
-     \hat \theta, \hat {x}(0) = \arg \min_{\theta, x(0)} \frac{1}{T} \sum_{k=0}^{T-1}  \| {\hat y^\mathrm{sim}(k) - y(k)}\|^2
+     \hat \param, \hat {x}(0) = \arg \min_{\param, x(0)} \frac{1}{T} \sum_{k=0}^{T-1}  \| {y^\mathrm{sim}(k) - y(k)}\|^2
    \end{equation*}
 
-  * $\hat y^\mathrm{sim}(k)$: output *simulated* by iterating the model, starting from $x(0)$
-  * Loss minimized over the parameters $\theta$ and the initial state $x(0)$
+  * $y^\mathrm{sim}(k)$: output *simulated* by iterating the model, starting from $x(0)$
+  * Loss minimized over the parameters $\param$ and the initial state $x(0)$
   * It enhances learning of long-term dependencies
 
 
@@ -172,11 +173,11 @@ params = {
   "W2": jr.normal(keys[2], shape=(nx, nh)) * 1e-3, # nx outputs
   "b2": jr.normal(keys[3], shape=(nx,)) * 1e-3, 
 
-  "C": jr.normal(keys[4], shape=(ny, nx)), # nx inputs and ny outputs
+  "C": jr.normal(keys[4], shape=(ny, nx)), # nx inputs, ny outputs
 }
 ```
 ```{python}
-x0 = jnp.zeros((nx,))
+x0 = jnp.zeros((nx,)) # initial state, also to be optimized
 ```
 
 ## Single step (left) and whole simulation (right)
@@ -255,7 +256,7 @@ After training (left), we test performance (right).
 #| echo: false
 # Setup optimizer
 lr = 1e-3
-iters = 10_000
+iters = 2_000
 optimizer = optax.adam(learning_rate=lr)
 opt_state = optimizer.init(opt_vars)
 loss_grad_fn = jax.jit(jax.value_and_grad(loss_fn))
@@ -277,7 +278,7 @@ y_te_sim = y_te_sim * y_std + y_mean
 ```{python}
 #| echo: false
 plt.figure(figsize=(4, 2.5))
-plt.title(f"Training: {iters} Adam iterations, learning rate 1e-3")
+plt.title(f"Training: {iters} Adam iterations, learning rate {lr}")
 plt.plot(LOSS)
 plt.xlabel("Iteration (-)")
 plt.ylabel("Loss")
@@ -302,4 +303,16 @@ plt.tight_layout();
 ```{python}
 rmse = jnp.sqrt(jnp.mean((y_te_sim - y_te)**2)); rmse
 ```
-Not too bad\dots
+Not too bad! Check out the official [**Benchmark Results**](https://www.nonlinearbenchmark.org/benchmarks/cascaded-tanks)
+
+## Exercise
+* Reproduce the training at the previous slide
+  * Hint: adapt the optimization code from the feed-forward example. 
+* Try out different models. You may modify:
+  * Hyper-parameters and optimization settings
+  * Parameter initialization
+  * Number of states
+  * Output equation as one of the two states
+  * Output equation as another feed-forward neural net
+  * ...
+* Try out a different dataset 
