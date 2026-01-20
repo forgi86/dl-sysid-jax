@@ -35,9 +35,11 @@ conda activate dl
 jupyter notebook
 ```
 
+Beginner users are advised to follow the steps above to avoid compatibility issues during the course. 
+
 Advanced Python user may opt for alternative setups such as venv, Docker, and different development environments like VSCode, PyCharm, etc., provided all required dependencies are installed and notebooks run as expected. 
 
-Beginner users are advised to follow the steps above to avoid compatibility issues during the course. 
+
 
 If you encounter issues, you may open the code examples in the browser using [Google Colab](https://colab.research.google.com/github/forgi86/dl-sysid-lyon2026/). However, a local setup is recommended for the best experience.
 
