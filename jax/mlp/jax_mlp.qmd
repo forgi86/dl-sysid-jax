@@ -1,6 +1,6 @@
 ---
 title: "Deep Learning with Jax"
-subtitle: "Fitting a feed-forward neural network"
+subtitle: "Feed-forward neural networks"
 author: "Marco Forgione"
 institute: "IDSIA USI-SUPSI, Lugano, Switzerland"
 aspectratio: 169
@@ -106,7 +106,7 @@ $$y = f(p, x).$$
 In our SISO problem $n_x=1, n_y=1$. We can choose $n_h$ (hyper-parameter).
 
 ## Feed-forward neural network
-In code, it is convenient to organize the parameters in a *dictionary*
+In code, it is convenient to organize parameters in a *dictionary*
 
 :::: {.columns}
 ::: {.column width="60%"}

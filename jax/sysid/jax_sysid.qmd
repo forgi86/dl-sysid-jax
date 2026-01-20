@@ -1,6 +1,6 @@
 ---
 title: "Deep Learning with Jax"
-subtitle: "Fitting state-space models"
+subtitle: "Fitting neural state-space models"
 author: "Marco Forgione"
 institute: "IDSIA USI-SUPSI, Lugano, Switzerland"
 aspectratio: 169
@@ -72,8 +72,18 @@ I don't need to convince you that they are general and powerful!
 
 \vskip 1em
 * We will see how to fit state-space models to data using Jax
-\pause
 * $f, g$ represented as feed-forward neural networks.
+
+## Benchmark Dataset: Cascaded Tanks
+
+Non-linear SISO system. Input: upper tank inlet flow $u$. Output: lower tank level $x_2$. 
+
+
+\begin{center}
+  \includegraphics[width=0.6\textwidth]{cascaded_tanks.png}
+\end{center}
+
+A pretty common [**benchmark**](https://www.nonlinearbenchmark.org/benchmarks/cascaded-tanks) for system identification algorithms.
 
 
 ## Training (left) and test (right) data
@@ -113,7 +123,7 @@ u_tr.shape, y_tr.shape, u_te.shape, y_te.shape
 ```
 
 ## Pre-processing
-Learning algorithms perform better with favorable scaling (e.g., standardization)
+Learning algorithms perform better with favorable **scaling** (e.g., standardization)
 ```{python}
 u_mean = jnp.mean(u_tr); u_std = jnp.std(u_tr)
 u_tr_sc = (u_tr - u_mean) / u_std
@@ -141,11 +151,11 @@ Same procedure applied to the output\dots
 
 ## Model fitting
 
-* Among several valid options, we choose the structure:
+* Among several valid options, we choose the model structure:
 
   \begin{align*}
-  x(k+1) &= f(x(k), u(k)) = x(k) + W_2 \tanh(W_1 \mathrm{vec}(x, u) + b_1) + b_2 \\
-  y(k) &= g(x(k)) = C x (k)
+  x(k+1) &= x(k) + W_2 \tanh(W_1 \mathrm{vec}(x(k), u(k)) + b_1) + b_2 \\
+  y(k) &=  C x (k)
   \end{align*}
 
   State update: previous state + $\mathrm{FF}(x, u)$. Output: linear.
@@ -158,7 +168,7 @@ Same procedure applied to the output\dots
    \end{equation*}
 
   * $y^\mathrm{sim}(k)$: output *simulated* by iterating the model, starting from $x(0)$
-  * Loss minimized over the parameters $\param$ and the initial state $x(0)$
+  * Loss minimized w.r.t. the parameters $\param$ and the initial state $x(0)$
   * It enhances learning of long-term dependencies
 
 
@@ -215,7 +225,7 @@ def sim(p, x, us):
 
 \pause
 \vskip 1em
-* For nerds: see alternative `sim` based on `jax.lax.scan` (equivalent, faster)
+* For nerds: see `sim` implementation with `jax.lax.scan` (equivalent, faster)
 
 ```{python}
 #| echo: false
@@ -251,7 +261,7 @@ loss_fn(opt_vars, y_tr_sc, u_tr_sc)
 ```
 
 ## Training loss and test performance
-After training (left), we test performance (right).
+After training (left), we assess test-set performance (right).
 ```{python}
 #| echo: false
 # Setup optimizer

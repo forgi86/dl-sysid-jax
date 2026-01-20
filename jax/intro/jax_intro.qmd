@@ -284,6 +284,6 @@ plt.tight_layout()
 
 ## Exercises
 * Open the accompanying notebook and familiarize with the environment/code
-* Verify that the gradient returnded by Jax is correct
-* Verify that the optimized $\hat p$ is close to $p^0$
+* Verify that the optimized $\hat p$ is close to $p^o$
 * Save and visualize the loss vs. iteration
+* Verify that the gradient returned by Jax is correct
