@@ -39,7 +39,7 @@ import matplotlib
 import numpy as onp
 import nonlinear_benchmarks
 
-key = jr.key(42)
+key = jr.key(17)
 keys = jr.split(key, 5)
 
 # Define your custom parameters as a dictionary

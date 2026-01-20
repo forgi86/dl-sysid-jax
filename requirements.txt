@@ -1,0 +1,7 @@
+matplotlib
+tqdm
+jupyter
+jax
+optax
+flax
+nonlinear_benchmarks
