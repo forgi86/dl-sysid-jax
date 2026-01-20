@@ -218,3 +218,6 @@ __marimo__/
 
 .DS_Store
 tmp/
+slides/quarto/jax_intro_files/*
+slides/quarto/jax_fft_files/*
+slides/quarto/jax_sysid_files/*
