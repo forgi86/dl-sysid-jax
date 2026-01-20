@@ -25,7 +25,7 @@ We recommend setting up a **Conda virtual environment** with Python and the requ
   conda activate dl
   pip install -r requirements.txt
  ```
-This will create a virtual environment named dl and install all the dependencies listed in [requirements.txt](requirements.txt). On Windows, you should run the commands above in the Anaconda Prompt.
+This will create a virtual environment named dl and install all the dependencies listed in [requirements.txt](requirements.txt). On Windows, you should run all commands in the Anaconda Prompt.
 
 
 4. **Run notebooks in jupyter**
@@ -39,8 +39,8 @@ Advanced Python user may opt for alternative setups such as venv, Docker, and di
 
 Beginner users are advised to follow the steps above to avoid compatibility issues during the course. 
 
-If you encounter issues, you may open the code examples in the browser using [Google Colab](https://colab.research.google.com/github/forgi86/dl-sysid-lyon2026/).
+If you encounter issues, you may open the code examples in the browser using [Google Colab](https://colab.research.google.com/github/forgi86/dl-sysid-lyon2026/). However, a local setup is recommended for the best experience.
 
 
 ## Prerequisites
-Basic knowledge of Python, pandas and matplotlib is recommended. However, we will try to keep the code examples as simple and self-contained as possible. 
+Basic knowledge of Python, numpy and matplotlib may help. However, we will try to keep the code examples as simple as possible so that people with experience in other numerical software tools can follow along.
