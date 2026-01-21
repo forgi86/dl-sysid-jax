@@ -326,3 +326,15 @@ Not too bad! Check out the official [**Benchmark Results**](https://www.nonlinea
   * Output equation as another feed-forward neural net
   * ...
 * Try out a different dataset 
+
+
+## Some links
+
+* A more extensive Jax tutorial: https://github.com/forgi86/jax-tutorial
+* Re-implementation of existing SYSID methods from the literature: https://github.com/forgi86/jax-ident
+* Same in PyTorch: https://github.com/forgi86/pytorch-ident
+* PyTorch SYSID package from TU/e: https://github.com/MaartenSchoukens/deepSI
+* Jax SYSID package from IMT: https://github.com/bemporad/jax-sysid
+
+\vskip 1em
+Actually many more... the ones above I have either authored or tested!

@@ -256,3 +256,5 @@ plt.legend();
 * Try out different initialization and optimization settings
 * Define and train a neural network with 2 hidden layers
 * Replicate the 2D example in the introductory slides
+* Implement mini-batching
+  * At each optimization step, sample a *subset* of training instances
