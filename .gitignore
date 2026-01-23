@@ -218,6 +218,8 @@ __marimo__/
 
 .DS_Store
 tmp/
-slides/quarto/01_jax_intro/*
-slides/quarto/02_feedforward/*
-slides/quarto/03_sysid/*
+
+# Temporary files created by Quarto when rendering slides
+slides/quarto/01_jax_intro_files/*
+slides/quarto/02_feedforward_files/*
+slides/quarto/03_sysid_files/*
