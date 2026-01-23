@@ -1,5 +1,5 @@
 ---
-title: "Deep Learning with Jax"
+title: "Deep Learning with JAX"
 subtitle: "Feed-forward neural networks"
 author: "Marco Forgione"
 institute: "IDSIA USI-SUPSI, Lugano, Switzerland"

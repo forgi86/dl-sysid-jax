@@ -1,5 +1,5 @@
 ---
-title: "Deep Learning with Jax"
+title: "Deep Learning with JAX"
 subtitle: "Fitting neural state-space models"
 author: "Marco Forgione"
 institute: "IDSIA USI-SUPSI, Lugano, Switzerland"
