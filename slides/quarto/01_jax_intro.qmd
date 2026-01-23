@@ -1,5 +1,5 @@
 ---
-title: "Deep Learning with Jax"
+title: "Deep Learning with JAX"
 subtitle: "Introduction"
 author: "Marco Forgione"
 institute: "IDSIA USI-SUPSI, Lugano, Switzerland"
@@ -29,7 +29,7 @@ echo: true
 
 
 ## Getting started
-Jax has an interface that behaves like numpy (or MATLAB). Let's compute:
+JAX has an interface that behaves like numpy (or MATLAB). Let's compute:
 
 $$
 \begin{bmatrix}
@@ -100,9 +100,9 @@ a + b
 \pause
 
 \vskip 1em
-* Jax is slightly more verbose. The price of a general-purpose language like Python.
+* JAX is slightly more verbose. The price of a general-purpose language like Python.
 \pause
-* Jax allows you define a generic 1D vector (neither a row or a column).
+* JAX allows you define a generic 1D vector (neither a row or a column).
 \pause
 * A few more subtle differences...
 
@@ -124,7 +124,7 @@ end
 :::
 
 ::: {.column width="60%"}
-Jax
+JAX
 ```{python}
 def f(p, x):
     y = p[0] * x  + p[1]
@@ -205,7 +205,7 @@ loss_fn(p_hat, y, x)
 ```
 
 
-## Automatic differentiation in Jax
+## Automatic differentiation in JAX
 * For gradient-based optimization, we need the gradient:
 $$
 \nabla_{1} \mathcal{L}(p, y, x): \mathbb{R}^{n_p} \times \mathbb{R}^N \times \mathbb{R}^N \mapsto \mathbb{R}^{n_p},
@@ -214,7 +214,7 @@ i.e. the derivative of $\mathcal{L}$ with respect to its first argument: $p$.
 
 \pause
 
-* The main point of Jax (PyTorch, ...) is *automatic differentiation*. Efficient & effortless numerical evaluation of derivatives of interest!
+* The main point of JAX (PyTorch, ...) is *automatic differentiation*. Efficient & effortless numerical evaluation of derivatives of interest!
 \pause
 ```{python}
 grad_fn = jax.grad(loss_fn, 0) # gradient wrt 1st agrument
@@ -227,7 +227,7 @@ grad_fn(p_hat, y, x)
 ```
 
 
-## Fitting a model with Jax
+## Fitting a model in JAX
 With automatic differentiation, setting up gradient descent is a piece of cake.
 ```{python}
 #| echo: false 
@@ -286,4 +286,4 @@ plt.tight_layout()
 * Open the accompanying notebook and familiarize with the environment/code
 * Verify that the optimized $\hat p$ is close to $p^o$
 * Save and visualize the loss vs. iteration
-* Verify that the gradient returned by Jax is correct
+* Verify that the gradient returned by JAX is correct
