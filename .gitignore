@@ -220,6 +220,8 @@ __marimo__/
 tmp/
 
 # Temporary files created by Quarto when rendering slides
+slides/quarto/00_general_intro_files/*
 slides/quarto/01_jax_intro_files/*
 slides/quarto/02_feedforward_files/*
 slides/quarto/03_sysid_files/*
+~$*
