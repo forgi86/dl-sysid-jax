@@ -67,12 +67,12 @@ y(k) &= g(x(k); \param)
 * $y(k) \in \mathbb{R}^{n_y}$ is the output vector
 * $\param \in \mathbb{R}^{n_\param}$ is the parameter vector
 
-I don't need to convince you that they are general and powerful!
+No need to convince you that they are general and powerful!
 \pause
 
 \vskip 1em
-* We will see how to fit state-space models to data using Jax
-* $f, g$ represented as feed-forward neural networks.
+* We will see how to fit state-space models to data using JAX
+* $f, g$ represented as neural networks.
 
 ## Benchmark Dataset: Cascaded Tanks
 
@@ -80,7 +80,7 @@ Non-linear SISO system. Input: upper tank inlet flow $u$. Output: lower tank lev
 
 
 \begin{center}
-  \includegraphics[width=0.6\textwidth]{cascaded_tanks.png}
+  \includegraphics[width=0.6\textwidth]{img/cascaded_tanks.png}
 \end{center}
 
 A pretty common [**benchmark**](https://www.nonlinearbenchmark.org/benchmarks/cascaded-tanks) for system identification algorithms.
@@ -154,7 +154,7 @@ Same procedure applied to the output\dots
 * Among several valid options, we choose the model structure:
 
   \begin{align*}
-  x(k+1) &= x(k) + W_2 \tanh(W_1 \mathrm{vec}(x(k), u(k)) + b_1) + b_2 \\
+  x(k+1) &= x(k) + W_2 \tanh(W_1 [x(k)^\top\;; u(k)^\top]^\top + b_1) + b_2 \\
   y(k) &=  C x (k)
   \end{align*}
 
@@ -164,11 +164,11 @@ Same procedure applied to the output\dots
 * We will implement simulation error minimization:
 
    \begin{equation*}
-     \hat \param, \hat {x}(0) = \arg \min_{\param, x(0)} \frac{1}{T} \sum_{k=0}^{T-1}  \| {y^\mathrm{sim}(k) - y(k)}\|^2
+     \hat \param, \hat {x}(1) = \arg \min_{\param, x(1)} \frac{1}{T} \sum_{k=1}^{T}  \| {y^\mathrm{sim}(k) - y(k)}\|^2
    \end{equation*}
 
-  * $y^\mathrm{sim}(k)$: output *simulated* by iterating the model, starting from $x(0)$
-  * Loss minimized w.r.t. the parameters $\param$ and the initial state $x(0)$
+  * $y^\mathrm{sim}(k)$: output *simulated* by iterating the model, starting from $x(1)$
+  * Loss minimized w.r.t. the parameters $\param$ and the initial state $x(1)$
   * It enhances learning of long-term dependencies
 
 
@@ -318,23 +318,34 @@ Not too bad! Check out the official [**Benchmark Results**](https://www.nonlinea
 ## Exercise
 * Reproduce the training at the previous slide
   * Hint: adapt the optimization code from the feed-forward example. 
+\vskip 1em
 * Try out different models. You may modify:
   * Hyper-parameters and optimization settings
   * Parameter initialization
   * Number of states
   * Output equation as one of the two states
-  * Output equation as another feed-forward neural net
+  * Output equation as another feedforward neural net
   * ...
+\vskip 1em
 * Try out a different dataset 
 
 
 ## Some links
 
-* A more extensive Jax tutorial: https://github.com/forgi86/jax-tutorial
+* A more extensive JAX tutorial: https://github.com/forgi86/jax-tutorial
+\vskip .5em
 * Re-implementation of existing SYSID methods from the literature: https://github.com/forgi86/jax-ident
+\vskip .5em
 * Same in PyTorch: https://github.com/forgi86/pytorch-ident
+\vskip .5em
 * PyTorch SYSID package from TU/e: https://github.com/MaartenSchoukens/deepSI
-* Jax SYSID package from IMT: https://github.com/bemporad/jax-sysid
+\vskip .5em
+* JAX SYSID package from IMT: https://github.com/bemporad/jax-sysid
 
 \vskip 1em
 Actually many more... the ones above I have either authored or tested!
+
+<!-- ## What we haven't covered
+* I seldom write neural network models and parameter initialization code from scratch
+   * Libraries like `flax`, `haiku`, and `eqinox` may be convenient
+   * They also also offers an object-oriented interface similar to PyTorch -->
