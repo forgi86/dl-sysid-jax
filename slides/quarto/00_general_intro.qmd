@@ -34,11 +34,10 @@ echo: true
 ```{python}
 #| echo: false
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 
 custom_params = {
-    'figure.figsize': (4, 1.2),  # Width, Height in inches
+    'figure.figsize': (4, 3),  # Width, Height in inches
     'font.size': 7,           # Default font size
     'axes.grid': True,         # Always show grid
 }
@@ -105,10 +104,9 @@ plt.tight_layout()
 * Iterative optimization, often gradient-based \pause
 * Efficient software for automatic differentiation \pause
 
-Still, you may see it as *glorified curve fitting*.
+Is it just a form of *glorified curve fitting*?
 
-## Feed-Forward Neural Networks
-
+## Feedforward Neural Networks
 :::: {.columns}
 ::: {.column width="55%"}
 \begin{center}
@@ -130,8 +128,8 @@ Still, you may see it as *glorified curve fitting*.
 \end{align*}
 
 \pause
-* Linear blocks interleaved by element-wise non-linearities (activation functions) \pause
-* Non-linearities essential for expressivenes
+* Linear blocks interleaved by non-linear **activation functions**, e.g. $\tanh$ \pause
+* Non-linearities essential for expressiveness
 
 ## Gradient Descent
 
@@ -171,9 +169,10 @@ Consider the 2D function $f: \mathbb{R}^2 \mapsto \mathbb{R}$
 $$ f(x) = 2\sin (x_1) - 3\cos (x_2) $$
 $$ x \in [-2, 2]^2 \subset \mathbb{R}^2$$
 
-\vskip 1em
+\vskip 2em
 
 * Training and test datasets: 500 random points in the domain
+\vskip 1em
 * Additive noise with standard deviation 0.1
 :::
 
@@ -222,10 +221,158 @@ ax1 = fig.add_subplot(121, projection='3d')
 ax1.plot_surface(X1_mesh, X2_mesh, y_grid.reshape(100, 100), cmap='coolwarm', alpha=0.7)#, edgecolor='none')
 ax1.set_xlabel("$x_1$")
 ax1.set_ylabel("$x_2$")
-ax1.scatter(X_train[:, 0], X_train[:, 1], y_train[:, 0], color='k', s=10)
+ax1.scatter(X_train[:, 0], X_train[:, 1], y_train[:, 0], color='k', s=2)
 ax1.legend()
 ax1.set_zlabel("$y$")
 plt.show()
+```
+:::
+::::
+
+## Feed-forward neural network
+:::: {.columns}
+
+::: {.column width="50%"}
+Model with:
+
+* 2 inputs, 1 output - just like $f(x)$
+* 2 hidden layers with $[16, 8]$ neurons
+* $\mathrm{tanh(\cdot)}$ non-linearities
+
+\vskip 2em
+
+Training: 5000 iterations of \texttt{Adam}...
+```{python}
+#| echo: false
+# Initialize all parameters and organize them in a dictionary
+
+import jax
+import jax.random as jr
+import jax.numpy as jnp
+import optax
+
+key = jr.key(4)
+key_W1, key_b1, key_W2, key_b2, key_W3, key_b3 = jr.split(key, 6)
+nx = 2; ny = 1; nh = 16
+hidden_size = [16, 8]
+
+params = {
+  "W1": jr.normal(key_W1, shape=(hidden_size[0], nx)),
+  "b1": jr.normal(key_b1, shape=(hidden_size[0],)),
+  "W2": jr.normal(key_W2, shape=(hidden_size[1], hidden_size[0])),
+  "b2": jr.normal(key_b2, shape=(hidden_size[1],)),
+  "W3": jr.normal(key_W3, shape=(ny, hidden_size[1])),
+  "b3": jr.normal(key_b3, shape=(ny,)),
+}
+
+def neural_net(params, x):
+    h1 = jnp.tanh(jnp.dot(params["W1"], x) + params["b1"])
+    h2 = jnp.tanh(jnp.dot(params["W2"], h1) + params["b2"])
+    y = jnp.dot(params["W3"], h2) + params["b3"]
+    return y
+
+batched_neural_net = jax.vmap(neural_net, in_axes=(None, 0))
+
+def loss_fn(params, y, x):
+    y_pred = batched_neural_net(params, x)
+    return jnp.mean((y - y_pred) ** 2)
+
+loss_grad_fn = jax.jit(jax.value_and_grad(loss_fn, 0))
+
+lr = 1e-2
+iters = 5000
+
+# Setup optimizer
+optimizer = optax.adam(learning_rate=lr)
+opt_state = optimizer.init(params)
+
+# Training loop
+LOSS = []
+for iter in range(iters):
+    loss_val, grads = loss_grad_fn(params, y_train, X_train)
+    updates, opt_state = optimizer.update(grads, opt_state)
+    params = optax.apply_updates(params, updates)
+    LOSS.append(loss_val)
+
+plt.figure(figsize=(4, 2))
+plt.plot(LOSS)
+plt.xlabel("Iteration (-)")
+plt.ylabel("Loss function")
+
+y_test_pred = batched_neural_net(params, X_test)
+y_pred_grid = batched_neural_net(params, X_grid).squeeze(-1)
+```
+:::
+
+::: {.column width="50%"}
+\begin{center}
+  $\hat {y} = W_3\sigma\big(W_2\sigma(W_1 x + b_1)+ b_2\big) + b_3$ 
+  \vskip 1em
+  \includegraphics[width=0.8\textwidth]{img/ff_two_layers.pdf}
+\end{center}
+:::
+
+::::
+
+
+## Model evaluation
+
+::::{.columns}
+:::{.column width="50%"}
+
+Common to inspect on the test: 
+
+* Predictions and residuals vs measured output (left)
+* Histogram of residuals (right)
+
+\vskip 1em
+Keep on following the good practices!
+:::
+
+:::{.column width="50%"}
+```{python}
+#| echo: false
+fig, ax = plt.subplots(1, 2, figsize=(4, 1.5))
+ax[0].set_title("Test residual plot")
+ax[0].plot(y_test, y_test_pred, 'C0o')
+ax[0].plot(y_test, y_test - y_test_pred, 'ro')
+ax[1].set_title("Test residuals histogram")
+ax[1].hist(y_test - y_test_pred);
+```
+:::
+::::
+
+\pause
+
+::::{.columns}
+:::{.column width="50%"}
+
+\vskip 2em
+
+2D toy example. We can also visualize:
+
+* The learned model over a grid (left)
+* The known true function (right)
+:::
+
+:::{.column width="50%"}
+```{python}
+#| echo: false
+fig = plt.figure(figsize=(4, 1.5))
+ax1 = fig.add_subplot(121, projection='3d')
+ax1.plot_surface(X1_mesh, X2_mesh, y_grid.reshape(grid_points, grid_points), cmap='coolwarm', edgecolor='none')
+ax1.set_title("True Function")
+ax1.set_xlabel("$x_1$")
+ax1.set_ylabel("$x_2$")
+ax1.set_zlabel("y")
+
+# 3D Plot of NN Predictions
+ax2 = fig.add_subplot(122, projection='3d')
+ax2.plot_surface(X1_mesh, X2_mesh, y_pred_grid.reshape(grid_points, grid_points), cmap='coolwarm', edgecolor='none')
+ax2.set_title("NN Function")
+ax2.set_xlabel("$x_1$")
+ax2.set_ylabel("$x_2$")
+ax2.set_zlabel("y");
 ```
 :::
 ::::
