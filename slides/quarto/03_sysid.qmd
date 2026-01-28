@@ -154,7 +154,7 @@ Same procedure applied to the output\dots
 * Among several valid options, we choose the model structure:
 
   \begin{align*}
-  x(k+1) &= x(k) + W_2 \tanh(W_1 [x(k)^\top\;; u(k)^\top]^\top + b_1) + b_2 \\
+  x(k+1) &= x(k) + W_2 \tanh(W_1 [x(k)^\top\; u(k)^\top]^\top + b_1) + b_2 \\
   y(k) &=  C x (k)
   \end{align*}
 
@@ -345,7 +345,13 @@ Not too bad! Check out the official [**Benchmark Results**](https://www.nonlinea
 \vskip 1em
 Actually many more... the ones above I have either authored or tested!
 
-<!-- ## What we haven't covered
-* I seldom write neural network models and parameter initialization code from scratch
-   * Libraries like `flax`, `haiku`, and `eqinox` may be convenient
-   * They also also offers an object-oriented interface similar to PyTorch -->
+## Remarks
+* Training a feedforward neural network in JAX is quite easy
+\vskip 1em
+* Most of the effort to specify the model and initialize its parameters
+  * higher-level JAX libraries like `flax` help you out with that
+\vskip 1em
+* Once you have the model and the loss as functions, the rest is boilerplate
+\pause
+\vskip 1em
+* JAX adopts a native functional interface. Other libraries (eg, PyTorch) are primarlily object-oriented.

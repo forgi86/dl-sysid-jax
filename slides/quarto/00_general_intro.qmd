@@ -97,12 +97,12 @@ plt.tight_layout()
 ::::
 
 \pause
-\vskip 1em
 
+In deep learning:
 
-* Expressive model structures like neural networks \pause
-* Iterative optimization, often gradient-based \pause
-* Efficient software for automatic differentiation \pause
+* Expressive model structures like **neural networks**
+* Iterative optimization, often gradient-based
+* Efficient software with support for **automatic differentiation**
 
 Is it just a form of *glorified curve fitting*?
 
@@ -128,8 +128,8 @@ Is it just a form of *glorified curve fitting*?
 \end{align*}
 
 \pause
-* Linear blocks interleaved by non-linear **activation functions**, e.g. $\tanh$ \pause
-* Non-linearities essential for expressiveness
+* Linear blocks interleaved by non-linear **activation functions** $\sigma$, e.g. $\tanh$ \pause
+* Non-linearities essential for **expressiveness**
 
 ## Gradient Descent
 
@@ -138,27 +138,30 @@ Is it just a form of *glorified curve fitting*?
 1. Initialize: $\hat \theta$
 
 2. **for** $k=1,\dots,N$:
-   - Compute Gradient: $g = \nabla \mathcal{L}(\theta^k)$
+   - Compute Gradient: $g = \nabla_{\theta} \mathcal{L}(\theta^k)$
    - Update Parameters: 
    $$\hat \theta = \hat \theta - \gamma g$$
 3. **end**
 
 \pause
 \vskip 1em
-Local convergence to one of the many minima is OK!
+Local convergence to one of the **several minima** is OK!
 :::
 
 ::: {.column width="35%"}
-LOSS_LANDSCAPE
+\begin{center}
+  Loss landscape
+  \includegraphics[width=0.99\textwidth]{img/loss_landscape.pdf}
+\end{center}
 :::
 ::::
 
 \pause
 \vskip 1em
 
-* Mini-batching: at each iteration, compute loss on **a subset** of the dataset
-* Variants of plain gradient descent like Adam are more common and effective
-* Second-order methods like (L)-BFGS also suitable for small/medium-scale problems
+* Mini-batching: at each iteration, compute loss on a subset of the dataset \vskip .2em
+* Variants of plain gradient descent like \texttt{Adam} are more common and effective \vskip .2em
+* Second-order methods like (L)-BFGS also suitable for small/medium-scale problems 
 
 ## Example: synthetic toy dataset
 
@@ -223,8 +226,7 @@ ax1.set_xlabel("$x_1$")
 ax1.set_ylabel("$x_2$")
 ax1.scatter(X_train[:, 0], X_train[:, 1], y_train[:, 0], color='k', s=2)
 ax1.legend()
-ax1.set_zlabel("$y$")
-plt.show()
+ax1.set_zlabel("$y$");
 ```
 :::
 ::::
@@ -237,7 +239,7 @@ Model with:
 
 * 2 inputs, 1 output - just like $f(x)$
 * 2 hidden layers with $[16, 8]$ neurons
-* $\mathrm{tanh(\cdot)}$ non-linearities
+* $\mathrm{tanh(\cdot)}$ activation functions
 
 \vskip 2em
 
@@ -306,7 +308,7 @@ y_pred_grid = batched_neural_net(params, X_grid).squeeze(-1)
 
 ::: {.column width="50%"}
 \begin{center}
-  $\hat {y} = W_3\sigma\big(W_2\sigma(W_1 x + b_1)+ b_2\big) + b_3$ 
+  $\hat {y} = W_3\tanh\big(W_2\tanh(W_1 x + b_1)+ b_2\big) + b_3$ 
   \vskip 1em
   \includegraphics[width=0.8\textwidth]{img/ff_two_layers.pdf}
 \end{center}
@@ -334,8 +336,9 @@ Keep on following the good practices!
 #| echo: false
 fig, ax = plt.subplots(1, 2, figsize=(4, 1.5))
 ax[0].set_title("Test residual plot")
-ax[0].plot(y_test, y_test_pred, 'C0o')
-ax[0].plot(y_test, y_test - y_test_pred, 'ro')
+ax[0].scatter(y_test, y_test_pred, s=1, c='b', label=r"$\hat y$")
+ax[0].scatter(y_test, y_test - y_test_pred, s=1, c='r', label=r"$y - \hat y$")
+ax[0].legend()
 ax[1].set_title("Test residuals histogram")
 ax[1].hist(y_test - y_test_pred);
 ```
@@ -351,8 +354,8 @@ ax[1].hist(y_test - y_test_pred);
 
 2D toy example. We can also visualize:
 
-* The learned model over a grid (left)
 * The known true function (right)
+* The learned model over a grid (left)
 :::
 
 :::{.column width="50%"}
@@ -369,10 +372,105 @@ ax1.set_zlabel("y")
 # 3D Plot of NN Predictions
 ax2 = fig.add_subplot(122, projection='3d')
 ax2.plot_surface(X1_mesh, X2_mesh, y_pred_grid.reshape(grid_points, grid_points), cmap='coolwarm', edgecolor='none')
-ax2.set_title("NN Function")
+ax2.set_title("Learned model")
 ax2.set_xlabel("$x_1$")
 ax2.set_ylabel("$x_2$")
-ax2.set_zlabel("y");
+ax2.set_zlabel("y")
+plt.tight_layout()
 ```
 :::
 ::::
+
+## Deep Learning For System Identification
+* Feedforward nets fed by lagged input/outputs for NARX identification:
+\vskip -1em
+ \begin{equation*}
+ \hat{y}(k) =  \mathrm{FF}\big(
+ \overbrace{
+ y(k-1),  \ldots, y(k-n_a), u(k),  u(k-1), \ldots,  u(k-n_b-1)
+ }^{=x(k)}
+ ; {\theta} \big) 
+\end{equation*}
+
+\vskip 2em
+\pause
+* State-space models with neural-network updata/output maps:
+  * Also known as **Recurrent Neural Networks**
+\vskip -1em
+\begin{align*}
+x({k+1}) &= \mathrm{FF}_x(x(k), u(k); \theta) \\
+y(k) &= \mathrm{FF}_y(x(k); \theta)
+\end{align*}
+
+## What we won't cover
+* Advanced architectures
+  * physics-informed
+  * grounded on system theory (e.g., stable by design)
+  * transformers, diffusion, foundation models,...
+
+\pause
+* Advanced optimization
+  * mini-batching (to handle large datasets)
+  * second-order, non-smooth, constrained…
+  * automatic differentiation details
+
+\pause
+* Theoretical aspects
+  * learning theory
+  * uncertainty quantification
+  * …
+
+## Software for Deep Learning
+
+An essential aspect is the software implementation. A few options:
+\vskip 2em
+
+:::: {.columns}
+
+:::{.column width="25%"}
+\begin{center}
+  \includegraphics[height=4em]{img/pytorch.png}
+\end{center}
+:::
+
+:::{.column width="25%"}
+  \includegraphics[height=3em]{img/jax.png}
+:::
+
+:::{.column width="25%"}
+  \includegraphics[height=4em]{img/julia.png}
+:::
+
+:::{.column width="25%"}
+  \includegraphics[height=4em]{img/matlab.png}
+:::
+::::
+\vskip 1em
+
+
+* PyTorch and JAX: libraries on top of Python
+* Julia: a programming  language focused on numerical computations
+* MATLAB: you should know it already…
+
+\pause
+\vskip 1em
+We will try out Google's [**JAX**](https://docs.jax.dev/en/latest/)!
+
+
+## Some Literature
+
+\small
+
+**Machine learning reference books** 
+
+* Murphy, Kevin P. *Probabilistic machine learning: An introduction.* MIT press, 2022.
+* Murphy, Kevin P. *Probabilistic machine learning: Advanced topics.* MIT press, 2023
+
+
+
+**Deep learning in system identification (my biased perspective)**
+
+* Forgione, Marco, and Piga, Dario. "Continuous-time system identification with neural networks: Model structures and fitting criteria." *European Journal of Control* 59 (2021).
+* Beintema, Gerben I., Maarten Schoukens, and Roland Tóth. "Deep subspace encoders for nonlinear system identification." *Automatica* (2023).
+* Bemporad, Alberto. "An L-BFGS-B Approach for Linear and Nonlinear System Identification Under $\ell_1$ and Group-Lasso Regularization." *IEEE Transactions on Automatic Control* (2025).
+* Pillonetto, Gianluigi, Aleksandr Aravkin, Daniel Gedon, Lennart Ljung, Antonio H. Ribeiro, and Thomas B. Schön. "Deep networks for system identification: a survey." *Automatica* (2025).

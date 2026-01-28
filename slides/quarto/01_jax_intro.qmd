@@ -217,13 +217,12 @@ i.e. the derivative of $\mathcal{L}$ with respect to its first argument: $p$.
 \pause
 
 * The main point of JAX (PyTorch, ...) is **automatic differentiation**. Efficient & effortless numerical evaluation of derivatives of interest!
-\pause
   ```{python}
   grad_fn = jax.grad(loss_fn, 0) # gradient wrt 1st agrument
   ```
 
 \pause
-The function ``grad_fn`` can be called on arbitraty arguments:
+The function ``grad_fn`` can be called with new arguments:
 ```{python}
 grad_fn(p_hat, y, x)
 ```
